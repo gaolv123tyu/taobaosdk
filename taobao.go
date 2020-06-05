@@ -146,7 +146,6 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 			newArgs += fmt.Sprintf("%s=%s", key, url.QueryEscape(p.Get(key)))
 			idx++ // 不能作为表达式
 		}
-		fmt.Println(newArgs)
 		buf = bytes.NewReader([]byte(newArgs))
 	}
 
