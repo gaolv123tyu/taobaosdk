@@ -34,7 +34,7 @@ func (this TaobaoUsergrowthDhhDeliveryAskRequest) Params() map[string]string {
 	m["imei_md5"] = this.ImeiMd5
 	m["oaid"] = this.Oaid
 	m["idfa"] = this.Idfa
-	m["imei"] = this.ImeiMd5
+	m["imei"] = this.Imei
 	m["os"] = this.Os
 	m["channel"] = this.Channel
 	m["advertising_space_id"] = this.AdvertisingSpaceID

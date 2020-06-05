@@ -1,6 +1,7 @@
 package taobaosdk
 
 import (
+	"bytes"
 	"crypto/hmac"
 	"crypto/md5"
 	"encoding/hex"
@@ -77,7 +78,9 @@ func (this *Client) URLValues(param Param) (value url.Values, err error) {
 	var ps = param.Params()
 	if ps != nil {
 		for key, value := range ps {
-			p.Add(key, value)
+			if value != "" {
+				p.Add(key, value)
+			}
 		}
 	}
 
@@ -114,6 +117,7 @@ func (this *Client) sign(args url.Values, secKey string) (string, error) {
 	var signString string
 	for _, key := range keys {
 		var value = strings.TrimSpace(args.Get(key))
+		//var value = args.Get(key)
 		if len(key) != 0 && len(value) > 0 {
 			signString += fmt.Sprintf("%s%s", key, args.Get(key))
 		}
@@ -125,7 +129,6 @@ func (this *Client) sign(args url.Values, secKey string) (string, error) {
 	return strings.ToUpper(encText), nil
 }
 
-
 func (this *Client) doRequest(method string, param Param, result interface{}) (err error) {
 	var buf io.Reader
 	if param != nil {
@@ -133,7 +136,18 @@ func (this *Client) doRequest(method string, param Param, result interface{}) (e
 		if err != nil {
 			return err
 		}
-		buf = strings.NewReader(p.Encode())
+
+		idx := 0
+		var newArgs string
+		for key := range p {
+			if idx != 0 {
+				newArgs += "&"
+			}
+			newArgs += fmt.Sprintf("%s=%s", key, url.QueryEscape(p.Get(key)))
+			idx++ // 不能作为表达式
+		}
+		fmt.Println(newArgs)
+		buf = bytes.NewReader([]byte(newArgs))
 	}
 
 	req, err := http.NewRequest(method, this.url, buf)
